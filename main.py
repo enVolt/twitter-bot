@@ -10,7 +10,7 @@ def debug(s):
 
 
 def addToIgnoreList(screen_name):
-    f = open('ignorelist.txt',a+)
+    f = open('ignorelist.txt','a')
     f.write(screen_name+'\n')
     f.close()
     global ignore_user_list
