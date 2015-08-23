@@ -1,4 +1,6 @@
 *.py[oc]
 .idea
 test.py
+
 authcred.py
+settings.py
