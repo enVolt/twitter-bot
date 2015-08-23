@@ -17,10 +17,15 @@ class MyStream(tweepy.StreamListener):
         print '\n'
         if status.user.screen_name in ignore_user_list:
             pass
-        elif not status.retweeted_status:
-            api.create_favorite(status.id_str)
-            if status.retweeted_count > 3:
-                api.retweet(status.id_str)
+        else:
+            try:
+                status.retweeted_status
+            except:
+                pass
+            else:
+                api.create_favorite(status.id_str)
+                if status.retweeted_count > 3:
+                    api.retweet(status.id_str)
 
     def on_disconnect(self, notice):
         print notice
