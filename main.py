@@ -19,9 +19,6 @@ class MyStream(tweepy.StreamListener):
             pass
         else:
             api.create_favorite(status.id_str)
-            print status.retweeted_count
-            if status.retweeted_count > 3:
-                api.retweet(status.id_str)
 
     def on_disconnect(self, notice):
         print notice
