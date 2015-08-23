@@ -27,7 +27,7 @@ class MyStream(tweepy.StreamListener):
 
 
 if __name__ == '__main__':
-    ignore_user_list = None
+    ignore_user_list = []
     auth = tweepy.OAuthHandler(authcred.consumer_key, authcred.consumer_secret)
     auth.set_access_token(authcred.access_token, authcred.access_token_secret)
     api = tweepy.API(auth)
