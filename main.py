@@ -8,6 +8,15 @@ def debug(s):
         print s
 
 
+
+def addToIgnoreList(screen_name):
+    f = open('ignorelist.txt',a+)
+    f.write(screen_name+'\n')
+    f.close()
+    global ignore_user_list
+    ignore_user_list += [screen_name]
+
+
 class MyStream(tweepy.StreamListener):
     def on_connect(self):
         print "Connected to twitter stream"
@@ -15,7 +24,9 @@ class MyStream(tweepy.StreamListener):
     def on_status(self, status):
         print status.text.encode('UTF-8')
         print '\n'
-        if status.user.screen_name in ignore_user_list:
+        if status.user.friends_count > 5000:
+            addToIgnoreList(status.user.screen_name)
+        elif status.user.screen_name in ignore_user_list:
             pass
         else:
             api.create_favorite(status.id_str)
