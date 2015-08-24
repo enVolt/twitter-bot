@@ -41,14 +41,23 @@ if __name__ == '__main__':
     # myStreamListener = MyStream()
     # myStream = tweepy.Stream(api.auth,myStreamListener)
     # myStream.filter(track=['#Wordpress'])
-    q = settings.search_qeury
-    debug('Search Query = ' + q)
 
-    for status in tweepy.Cursor(api.search, q = q, since_id = getSinceID()).items(10):
+    # q = settings.search_qeury
+    debug('Search Query = ' + q)
+    q = raw_input()
+    for status in tweepy.Cursor(api.search, q = q, since_id = getSinceID()).items(20):
         last_status = status
-        addToIgnoreList(status.user.screen_name)
-        api.create_friendship(status.user.screen_name)
-        api.create_favorite(status.id_str)
+        try:
+            api.create_friendship(status.user.screen_name)
+        except:
+            pass
+        finally:
+            addToIgnoreList(status.user.screen_name)
+
+        try:
+            api.create_favorite(status.id_str)
+        except:
+            pass
 
 
     updateSinceID(last_status.id_str)
