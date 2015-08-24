@@ -43,8 +43,8 @@ if __name__ == '__main__':
     # myStream.filter(track=['#Wordpress'])
 
     # q = settings.search_qeury
-    debug('Search Query = ' + q)
     q = raw_input()
+    debug('Search Query = ' + q)
     for status in tweepy.Cursor(api.search, q = q, since_id = getSinceID()).items(20):
         last_status = status
         try:
