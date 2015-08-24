@@ -8,31 +8,29 @@ def debug(s):
         print s
 
 
-
 def addToIgnoreList(screen_name):
-    f = open('ignorelist.txt','a')
-    f.write(screen_name+'\n')
+    f = open(settings.user_file, 'a')
+    f.write(screen_name + '\n')
     f.close()
-    global ignore_user_list
-    ignore_user_list += [screen_name]
 
 
-class MyStream(tweepy.StreamListener):
-    def on_connect(self):
-        print "Connected to twitter stream"
+def updateSinceID(id_str):
+    sinceidfile = open(settings.since_id_file, 'w+')
+    sinceidfile.write(id_str)
+    sinceidfile.close()
 
-    def on_status(self, status):
-        print status.text.encode('UTF-8')
-        print '\n'
-        if status.user.friends_count > 5000:
-            addToIgnoreList(status.user.screen_name)
-        elif status.user.screen_name in ignore_user_list:
-            pass
-        else:
-            api.create_favorite(status.id_str)
 
-    def on_disconnect(self, notice):
-        print notice
+def getSinceID():
+    sinceidfile = open(settings.since_id_file, 'r')
+    since_id = sinceidfile.read()
+    sinceidfile.close()
+    return since_id
+
+
+def addToUnfollowList(id_str):
+    userfile = open(settings.user_file, 'a+')
+    userfile.write(id_str + '\n')
+    userfile.close()
 
 
 if __name__ == '__main__':
@@ -40,6 +38,17 @@ if __name__ == '__main__':
     auth = tweepy.OAuthHandler(authcred.consumer_key, authcred.consumer_secret)
     auth.set_access_token(authcred.access_token, authcred.access_token_secret)
     api = tweepy.API(auth)
-    myStreamListener = MyStream()
-    myStream = tweepy.Stream(api.auth,myStreamListener)
-    myStream.filter(track=['#Wordpress'])
+    # myStreamListener = MyStream()
+    # myStream = tweepy.Stream(api.auth,myStreamListener)
+    # myStream.filter(track=['#Wordpress'])
+    q = settings.search_qeury
+    debug('Search Query = ' + q)
+
+    for status in tweepy.Cursor(api.search, q = q, since_id = getSinceID()).items(10):
+        last_status = status
+        addToIgnoreList(status.user.screen_name)
+        api.create_friendship(status.user.screen_name)
+        api.create_favorite(status.id_str)
+
+
+    updateSinceID(last_status.id_str)
